@@ -1,7 +1,7 @@
 {
   "name": "@recordreplay/sourcemap-upload-webpack-plugin",
   "version": "0.1.0",
-  "description": "A webpack plugin to run Replay's sourcemap-upload CLI logic when Webpack compilation finishes.",
+  "description": "A webpack plugin to run Replay's sourcemap-upload logic when Webpack compilation finishes.",
   "main": "./index.js",
   "exports": "./index.js",
   "types": "./lib/index.d.ts",
