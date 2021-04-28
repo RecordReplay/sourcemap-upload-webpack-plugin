@@ -5,7 +5,6 @@ import {
   uploadSourceMaps,
   UploadOptions,
   LogCallback,
-  MessageLevel,
 } from "@recordreplay/sourcemap-upload";
 import assert from "assert";
 
@@ -23,7 +22,7 @@ export default class ReplaySourceMapUploadWebpackPlugin {
     let log: LogCallback | undefined;
     if (logLevel === "normal") {
       log = (level, message) => {
-        if (level === MessageLevel.Normal) {
+        if (level === "normal") {
           console.log(message);
         }
       };

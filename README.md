@@ -1,6 +1,6 @@
 # @recordreplay/sourcemap-upload-webpack-plugin
 
-Wraps Replay's [sourcemap-upload][1] script in a Webpack plugin so that it
+Wraps Replay's [sourcemap-upload][1] module in a Webpack plugin so that it
 will execute automatically when the Webpack build has completed.
 
 ## PluginOptions
