@@ -10,14 +10,21 @@ import assert from "assert";
 
 export interface PluginOptions extends UploadOptions {
   logLevel?: "quiet" | "normal" | "verbose";
+  warnOnFailure?: boolean;
 }
 
 export default class ReplaySourceMapUploadWebpackPlugin {
   options: UploadOptions;
+  warnOnFailure: boolean;
 
   constructor(opts: PluginOptions) {
     assert(opts, "ReplaySourceMapUploadWebpackPlugin requires options");
-    const { logLevel = "normal", ...restOpts } = opts;
+    const { logLevel = "normal", warnOnFailure, ...restOpts } = opts;
+    assert(
+      typeof warnOnFailure === "boolean" ||
+        typeof warnOnFailure === "undefined",
+      "ReplaySourceMapUploadWebpackPlugin's 'warnOnFailure' must be a boolean or undefined."
+    );
 
     let log: LogCallback | undefined;
     if (logLevel === "normal") {
@@ -32,6 +39,7 @@ export default class ReplaySourceMapUploadWebpackPlugin {
       };
     }
 
+    this.warnOnFailure = !!warnOnFailure;
     this.options = {
       ...restOpts,
       log,
@@ -43,8 +51,20 @@ export default class ReplaySourceMapUploadWebpackPlugin {
   }
 
   apply(compiler: Compiler): void {
-    compiler.hooks.afterEmit.tapPromise("ReplayWebpackPlugin", () =>
-      this.afterAssetEmit()
-    );
+    const logger =
+      compiler.getInfrastructureLogger?.(
+        "ReplaySourceMapUploadWebpackPlugin"
+      ) || console;
+    compiler.hooks.afterEmit.tapPromise("ReplayWebpackPlugin", async () => {
+      try {
+        await this.afterAssetEmit();
+      } catch (err) {
+        if (!this.warnOnFailure) {
+          throw err;
+        }
+
+        logger.warn("ReplaySourceMapUploadWebpackPlugin upload failure", err);
+      }
+    });
   }
 }
